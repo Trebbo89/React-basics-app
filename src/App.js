@@ -4,6 +4,9 @@ import SearchBox from "./components/search-box/search-box.component";
 import logo from "./logo.svg";
 import "./App.css";
 
+//another change to analyze
+
+
 //esempio di componente funzionale
 // function App() {
 //   return (
