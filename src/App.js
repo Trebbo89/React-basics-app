@@ -4,10 +4,6 @@ import SearchBox from "./components/search-box/search-box.component";
 import logo from "./logo.svg";
 import "./App.css";
 
-//first change to push in a branch
-
-
-
 //esempio di componente funzionale
 // function App() {
 //   return (
