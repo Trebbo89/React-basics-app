@@ -1,105 +1,91 @@
-import { Component } from "react";
+import { useState, useEffect } from "react"; //hook
 import CardList from "./components/card-list/card-list.component";
 import SearchBox from "./components/search-box/search-box.component";
-import logo from "./logo.svg";
 import "./App.css";
 
-//esempio di componente funzionale
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
+//functional components
+const App = () => {
 
-// export default App;
+  const [searchField, setSearchField] = useState(""); // [value, setValue]
+  const [monsters, setMonsters] = useState([]);
+  const [filteredMonsters, setFilteredMonsters] = useState(monsters);
+  
+  //componente aggiuntivo in fase di test per verificare che il componente viene renderizzato
+  //ogni volta che una qualsiasi proprietà dello state cambia
+  const [stringField, setStringField] = useState("");
 
-//esempio componente classe
-class App extends Component {
-  constructor() {
-    super();
 
-    this.state = {
-      monsters: [],
-      searchField: "",
-    };
+  /* Per i componenti funzionali ognivolta che viene ri - renderizzato qualcosa react riesgue
+  l'intera funzione del componente dall'inzio alla fine
+  Il re - render è richiamamto perche è stata cambiata una propietà dello state utilizzato
+  con l hook. */
+  console.log("render");
 
-    // console.log("constructor");
-  }
+  /* 
+  RENDERING INFINITO
+  se inseriamo la fecth degli users all'interno del componente avremo un loop infinito di 
+  rendering; questo perche ogni volta che viene settato l'array per i monsters, esso
+  è legato ad un oggetto in memoria sempre differente. A quel punto il rendering sarà infinito.
+  Per risolvere questo problema bsigona usare i sideEffects (particolari procedure che vanno
+  ad impattare/modificare variabili/oggetti che si trovano al di fuori di questo scope.)
+  Il sideEffect di cui stiamo parlando è l'HOOK 'useEffect' */
 
-  //ciclo iniziale che viene eseguita una volta quando il componente viene montato
-  componentDidMount() {
-    // console.log("componentDidMount");
+  /* fetch("https://jsonplaceholder.typicode.com/users")
+    .then((response) => response.json())
+    .then((users) => setMonsters(users)); */
+  /*
+  
+  USEEFFECT
+  
+  questo hook prende in input una callback (dove sara contenuto tutto il codice da far 
+  eseguire) e un secondo argomento, un array di dipendenze. Lo useEffect viene lanciato ogni
+  volta che il valore dei campi dentro l'array di dipendenze cambia. In questo esempio 
+  viene passato vuoto perchè vogliamo che lo useEffect venga chiamato solo una volta, ossia 
+  dopo il mounting del unmountComponentAtNode. */
+  
+  useEffect(() => {
+    console.log('EFFEcT FIRED')
     fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => {
-        const jsonRes = response.json();
-        // console.log("sto stampando la risposta in json...");
-        // console.log(jsonRes);
-        return jsonRes;
-      }) //.json() per convertire la response in json
-      .then((users) =>
-        this.setState(
-          () => {
-            return { monsters: users };
-          },
-          () => {
-            // console.log(this.state);
-          }
-        )
-      );
-  }
+      .then((response) => response.json())
+      .then((users) => setMonsters(users));
+  }, []);
 
-  // viene creato un metodo a parte per la gestione dell'evento, questo perchè se lasciassimo la
-  // callback all'interno dell onChange, verrebbe inizializzata ogni volta. Al contrario in un metodo
-  // a parte verrebbe salvata in memoria e richiamata quando necessario.
-  onSearchChange = (event) => {
-    const searchField = event.target.value.toLocaleLowerCase();
-    this.setState(() => {
-      // se il nome della variabile dello state è lo stesso di quella che vogliamo
-      // usare possiamo usare solo una volta il nome della variabile. react capisce
-      // che deve inserire nella variabile dello state il valore della stessa variabile
-      // definita nella funzione
-      return { searchField };
-    });
-  };
-
-  render() {
-    // console.log("render");
-
-    // al posto di usare sempr eil this si usa il "destructuring" di js dove vengono istanziate delle
-    // variabili (nel contesto dove ci si trova). A dx si inserisce l'oggetto da cui prendere la variabile,
-    // a sx dentro le {} si inserisce il nome della variabile e in automatico viene creata una variabile
-    // con lo stesso valore della variabile presente nell'oggetto a destra.
-    const { monsters, searchField } = this.state;
-    const { onSearchChange } = this;
-
-    //variabile inserita
-    const monstersFiltered = monsters.filter((monster) => {
+  useEffect(() => {
+    const newFilteredMonsters =  monsters.filter((monster) => {
       return monster.name.toLocaleLowerCase().includes(searchField);
     });
+    console.log('effect if fireing');
+    setFilteredMonsters(newFilteredMonsters);
+  }, [monsters, searchField]);
 
-    return (
-      <div className="App">
-      <h1 className="app-title">Monsters Rolodex</h1>
-        <SearchBox onChangeHandler = {onSearchChange} placeholder = {'search-box'} classname = {'monsters-search-box'}/>
-        <CardList monsters = {monstersFiltered}/>
-      </div>
-    );
+
+  const onSearchChange = (event) => {
+    const searchFieldString = event.target.value.toLocaleLowerCase();
+    setSearchField(searchFieldString);
+  };
+
+  /* evento inserito per far vedere che ad ogni proprietà dello state all'interno del componente
+  se corrisponde una modifica, viene ri renderizzato il tutto. Questo onChange è stato
+  inserito dentro il componente input set string */
+  const onStringChange = (event) => {
+    setStringField(event.target.value);
   }
-}
+
+  return (
+    <div className="App">
+      <h1 className="app-title">Monsters Rolodex</h1>
+      <SearchBox
+        onChangeHandler={onSearchChange}
+        placeholder={"search-box"}
+        classname={"monsters-search-box"}
+      />
+      <SearchBox
+        onChangeHandler={onStringChange}
+        placeholder={"set string"}
+      />
+      <CardList monsters={filteredMonsters} />
+    </div>
+  );
+};
 
 export default App;
