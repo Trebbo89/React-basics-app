@@ -4,8 +4,8 @@ import Card from "../card/card.component";
 
 class CardList extends Component {
   render() {
-    console.log(this.props.monsters);
-    console.log("render from cardlist");
+    /* console.log(this.props.monsters);
+    console.log("render from cardlist"); */
     const { monsters } = this.props;
 
     return (
