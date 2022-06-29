@@ -8,6 +8,10 @@ const App = () => {
   const [searchField, setSearchField] = useState(""); 
   const [monsters, setMonsters] = useState([]);
   const [filteredMonsters, setFilteredMonsters] = useState(monsters);
+  
+  //con la modalità strict il componente viene renderizzato 2 volte per catturare e risolvere eventuali comportamenti anomali del codice
+  //con react 18 i log "doppi" sono grigi
+  console.log("rendered");
 
   useEffect(() => {
     console.log('EFFEcT FIRED')
