@@ -41,7 +41,7 @@ const App = () => {
   eseguire) e un secondo argomento, un array di dipendenze. Lo useEffect viene lanciato ogni
   volta che il valore dei campi dentro l'array di dipendenze cambia. In questo esempio 
   viene passato vuoto perchè vogliamo che lo useEffect venga chiamato solo una volta, ossia 
-  dopo il mounting del unmountComponentAtNode. */
+  dopo il mounting del componente. */
   
   useEffect(() => {
     console.log('EFFEcT FIRED')
